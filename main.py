@@ -8,14 +8,12 @@ api = Api(app)
 # Minimal Resource supporting GET method.
 class HelloWorld(Resource):
     def get(self):
-        headers = {'Content-Type': 'text/html'}
         return "Hello, World!"
 
 
 # Resource supporting GET method with parameters.
 class SampleResource(Resource):
     def get(self):
-        headers = {'Content-Type': 'text/html'}
         get_parser = reqparse.RequestParser()
         get_parser.add_argument('sample_param', type=str)
         args = get_parser.parse_args()
@@ -26,7 +24,6 @@ class SampleResource(Resource):
 # Resource supporting GET method with optional resource ID.
 class AnotherResource(Resource):
     def get(self, resource_id=None):
-        headers = {'Content-Type': 'text/html'}
         # If resource ID is provided, GET matching resource.
         if resource_id:
             sample_response = "GET with resource ID: *%s*" % resource_id
