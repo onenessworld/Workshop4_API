@@ -3,6 +3,7 @@ from flask_restful import Api, Resource, reqparse
 
 app = Flask(__name__)
 api = Api(app)
+rider_data = {'R0': 'Karim', 'R1': 'Manuja', 'R2': 'Phil'}
 
 
 # Minimal Resource supporting GET method.
@@ -21,14 +22,17 @@ class SampleResource(Resource):
         return sample_response
 
 
-# Resource supporting GET method with optional resource ID.
-class AnotherResource(Resource):
-    def get(self, resource_id=None):
-        if resource_id:  # If resource ID is provided, GET matching resource.
-            sample_response = "GET with resource ID: *%s*" % resource_id
-        else:  # Else, print an error or GET all resources.
-            sample_response = "GET with no resource ID: this is either an error, or an opportunity to display all " \
-                              "available resource. "
+# Concrete example of RiderResource supporting GET method with rider ID query parameter.
+class RiderResource(Resource):
+    def get(self):
+        get_parser = reqparse.RequestParser()  # From flask library.
+        get_parser.add_argument('id', type=str)  # Expect a query param called "id".
+        args = get_parser.parse_args()  # Stores value of "id", defaults to None.
+        if args.id in rider_data:  # Check if "id" exists.
+            sample_response = "Rider with ID *%s* is *%s*" % (args.id, rider_data[args.id])
+        else:  # Provided "id" doesn't exist, return a useful message.
+            sample_response = "Rider ID *%s* doesn't exist, legal values are: %s"\
+                              % (args.id, list(rider_data.keys()))
         return sample_response
 
 
@@ -39,9 +43,9 @@ api.add_resource(HelloWorld, '/')
 # http://localhost:5000/sample_route?sample_param=some_random_value
 api.add_resource(SampleResource, '/sample_route')
 
-# http://localhost:5000/another_route
-# http://localhost:5000/another_route/some_resource_id
-api.add_resource(AnotherResource, '/another_route', '/another_route/<string:resource_id>')
+# http://localhost:5000/rider
+# http://localhost:5000/rider?id=some_rider
+api.add_resource(RiderResource, '/rider')
 
 
 if __name__ == "__main__":
