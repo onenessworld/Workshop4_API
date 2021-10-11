@@ -3,22 +3,13 @@ from flask_restful import Api, Resource, reqparse
 
 app = Flask(__name__)
 api = Api(app)
-rider_data = {'R0': 'Karim', 'R1': 'Manuja', 'R2': 'Phil'}
+rider_data = {'R0': 'Karim', 'R1': 'Manuja', 'R2': 'Phil'}  # Contains ID:Name of riders.
 
 
-# Minimal Resource supporting GET method.
-class HelloWorld(Resource):
-    def get(self):
-        return "Hello, World!"
-
-
-# Resource supporting GET method with parameters.
+# Resource supporting GET method with no parameters.
 class SampleResource(Resource):
     def get(self):
-        get_parser = reqparse.RequestParser()  # From flask library.
-        get_parser.add_argument('sample_param', type=str)  # Expect a query param called "sample_param".
-        args = get_parser.parse_args()  # Stores value of sample param, defaults to None.
-        sample_response = "GET parameter *sample_param* got value: *%s*" % args.sample_param
+        sample_response = "SampleResource got GET request."
         return sample_response
 
 
@@ -26,8 +17,8 @@ class SampleResource(Resource):
 class RiderResource(Resource):
     def get(self):
         get_parser = reqparse.RequestParser()  # From flask library.
-        get_parser.add_argument('id', type=str)  # Expect a query param called "id".
-        args = get_parser.parse_args()  # Stores value of "id", defaults to None.
+        get_parser.add_argument('id', type=str)  # Expect a query param called "id". Replicate this line for each query param.
+        args = get_parser.parse_args()  # Stores value of "id" (and any other query params), defaults to None.
         if args.id in rider_data:  # Check if "id" exists.
             sample_response = "Rider with ID *%s* is *%s*" % (args.id, rider_data[args.id])
         else:  # Provided "id" doesn't exist, return a useful message.
@@ -36,15 +27,11 @@ class RiderResource(Resource):
         return sample_response
 
 
-# http://localhost:5000/
-api.add_resource(HelloWorld, '/')
-
 # http://localhost:5000/sample_route
-# http://localhost:5000/sample_route?sample_param=some_random_value
-api.add_resource(SampleResource, '/sample_route')
+api.add_resource(SampleResource, '/sample_route')  # add_resource method maps a url/route to a resource.
 
 # http://localhost:5000/rider
-# http://localhost:5000/rider?id=some_rider
+# http://localhost:5000/rider?id=R5
 api.add_resource(RiderResource, '/rider')
 
 
